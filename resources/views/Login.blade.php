@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login UI</title>
+<title>Login</title>
 
 <style>
 * {
@@ -47,6 +47,17 @@ body {
 .tabs .active {
     border-bottom: 2px solid #0f9d8f;
     padding-bottom: 5px;
+    color: #0f9d8f;
+}
+
+.tabs a {
+    color: #999;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tabs a:hover {
     color: #0f9d8f;
 }
 
@@ -109,12 +120,22 @@ body {
     color: #0f9d8f;
 }
 
+.error-message {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
 .forgot {
     font-size: 13px;
     color: #888;
     margin-bottom: 22px;
     display: block;
     text-decoration: none;
+}
+
+.forgot:hover {
+    color: #0f9d8f;
 }
 
 .submit-btn {
@@ -242,6 +263,35 @@ body {
     margin-left: 20px;
 }
 
+.signup-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.signup-link a {
+    color: #0f9d8f;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+.field-error {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.input-group.has-error input {
+    border-color: #e74c3c !important;
+}
+
 /* RESPONSIVE */
 @media (max-width: 900px) {
     .container {
@@ -332,29 +382,46 @@ body {
 
             <div class="tabs">
                 <div class="active">Login</div>
-                <div>Sign up</div>
+                <a href="/signup">Sign up</a>
             </div>
 
-            <div class="input-group">
-                <input type="text" id="phone" placeholder=" " required>
-                <label for="phone">Phone Number</label>
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                </svg>
-            </div>
+            <form method="POST" action="/login">
+                @csrf
+                
+                <div class="input-group {{ $errors->has('email') ? 'has-error' : '' }}">
+                    <input type="email" name="email" placeholder=" " value="{{ old('email') }}" required>
+                    <label for="email">Email Address</label>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                    </svg>
+                    @if ($errors->has('email'))
+                        <div class="field-error">
+                            <span>✕</span>
+                            <span>{{ $errors->first('email') }}</span>
+                        </div>
+                    @endif
+                </div>
 
-            <div class="input-group">
-                <input type="password" id="password" placeholder=" " required>
-                <label for="password">Password</label>
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                </svg>
-            </div>
+                <div class="input-group {{ $errors->has('password') ? 'has-error' : '' }}">
+                    <input type="password" name="password" placeholder=" " required>
+                    <label for="password">Password</label>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    @if ($errors->has('password'))
+                        <div class="field-error">
+                            <span>✕</span>
+                            <span>{{ $errors->first('password') }}</span>
+                        </div>
+                    @endif
+                </div>
 
-            <a class="forgot" href="#">Forgot your password?</a>
+                <a class="forgot" href="/forgetpassword">Forgot your password?</a>
 
-            <button class="submit-btn">Login</button>
+                <button type="submit" class="submit-btn">Login</button>
+            </form>
 
             <div class="or-divider">
                 <span>or</span>
@@ -370,13 +437,17 @@ body {
                 Login with Google
             </button>
 
+            <div class="signup-link">
+                Don't have an account? <a href="/signup">Sign up here</a>
+            </div>
+
         </div>
     </div>
 
     <!-- RIGHT -->
     <div class="right">
         <div class="illustration">
-            <div class="laptop"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTZ_K63znAUycV5lAPb_c7aU1N3dMMtGkZ_A&s"></div>
+            <div class="laptop"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTZ_K63znAUycV5lAPb_c7aU1N3dMMtGkZ_A&s" alt="laptop"></div>
         </div>
     </div>
 
@@ -384,3 +455,4 @@ body {
 
 </body>
 </html>
+

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login UI</title>
+<title>Sign Up</title>
 
 <style>
 * {
@@ -47,6 +47,17 @@ body {
 .tabs .active {
     border-bottom: 2px solid #0f9d8f;
     padding-bottom: 5px;
+    color: #0f9d8f;
+}
+
+.tabs a {
+    color: #999;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tabs a:hover {
     color: #0f9d8f;
 }
 
@@ -107,6 +118,12 @@ body {
 
 .input-group input:focus ~ .icon {
     color: #0f9d8f;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 5px;
 }
 
 .forgot {
@@ -242,6 +259,22 @@ body {
     margin-left: 20px;
 }
 
+.login-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.login-link a {
+    color: #0f9d8f;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
 /* RESPONSIVE */
 @media (max-width: 900px) {
     .container {
@@ -317,6 +350,69 @@ body {
         width: 18px;
         height: 18px;
     }
+
+    .form-box {
+        max-width: 100%;
+    }
+}
+
+.password-requirements {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    font-size: 12px;
+}
+
+.password-requirements h4 {
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.requirement {
+    display: flex;
+    align-items: center;
+    margin: 6px 0;
+    color: #666;
+}
+
+.requirement.met {
+    color: #27ae60;
+}
+
+.requirement-check {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    margin-right: 8px;
+    text-align: center;
+    line-height: 12px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.requirement.met .requirement-check {
+    background: #27ae60;
+    border-color: #27ae60;
+    color: white;
+}
+
+.field-error {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.input-group.has-error input {
+    border-color: #e74c3c !important;
 }
 </style>
 </head>
@@ -331,46 +427,94 @@ body {
         <div class="form-box">
 
             <div class="tabs">
-                <div class="active">Login</div>
-                <div>Sign up</div>
-            </div>
- <div class="input-group">
-                <input type="text" id="phone" placeholder=" " required>
-                <label for="phone"> Name </label>
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                </svg>
+                <a href="/login">Login</a>
+                <div class="active">Sign up</div>
             </div>
 
-            <div class="input-group">
-                <input type="text" id="phone" placeholder=" " required>
-                <label for="phone">Phone Number</label>
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                </svg>
-            </div>
+            <form method="POST" action="/signup" id="signupForm">
+                @csrf
+                
+                <div class="input-group {{ $errors->has('name') ? 'has-error' : '' }}">
+                    <input type="text" name="name" placeholder=" " value="{{ old('name') }}" required>
+                    <label for="name">Full Name</label>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    @if ($errors->has('name'))
+                        <div class="field-error">
+                            <span>✕</span>
+                            <span>{{ $errors->first('name') }}</span>
+                        </div>
+                    @endif
+                </div>
 
-            <div class="input-group">
-                <input type="password" id="password" placeholder=" " required>
-                <label for="password">Password</label>
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                </svg>
-            </div>
+                <div class="input-group {{ $errors->has('email') ? 'has-error' : '' }}">
+                    <input type="email" name="email" placeholder=" " value="{{ old('email') }}" required>
+                    <label for="email">Email Address</label>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                    </svg>
+                    @if ($errors->has('email'))
+                        <div class="field-error">
+                            <span>✕</span>
+                            <span>{{ $errors->first('email') }}</span>
+                        </div>
+                    @endif
+                </div>
 
-             <div class="input-group">
-                <input type="password" id="password" placeholder=" " required>
-                <label for="password">Confirm Password</label>
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                </svg>
-            </div>
+                <div class="password-requirements">
+                    <h4>Password Requirements:</h4>
+                    <div class="requirement" id="length">
+                        <span class="requirement-check">✓</span> At least 8 characters
+                    </div>
+                    <div class="requirement" id="uppercase">
+                        <span class="requirement-check">✓</span> One uppercase letter (A-Z)
+                    </div>
+                    <div class="requirement" id="lowercase">
+                        <span class="requirement-check">✓</span> One lowercase letter (a-z)
+                    </div>
+                    <div class="requirement" id="number">
+                        <span class="requirement-check">✓</span> One number (0-9)
+                    </div>
+                    <div class="requirement" id="special">
+                        <span class="requirement-check">✓</span> One special character (@$!%*?&)
+                    </div>
+                </div>
 
-            <a class="forgot" href="#">Forgot your password?</a>
+                <div class="input-group {{ $errors->has('password') ? 'has-error' : '' }}">
+                    <input type="password" name="password" id="password" placeholder=" " required onkeyup="checkPassword()">
+                    <label for="password">Password</label>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    @if ($errors->has('password'))
+                        <div class="field-error">
+                            <span>✕</span>
+                            <span>{{ $errors->first('password') }}</span>
+                        </div>
+                    @endif
+                </div>
 
-            <button class="submit-btn">Login</button>
+                <div class="input-group {{ $errors->has('password_confirmation') ? 'has-error' : '' }}">
+                    <input type="password" name="password_confirmation" id="password_confirmation" placeholder=" " required>
+                    <label for="password_confirmation">Confirm Password</label>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    @if ($errors->has('password_confirmation'))
+                        <div class="field-error">
+                            <span>✕</span>
+                            <span>{{ $errors->first('password_confirmation') }}</span>
+                        </div>
+                    @endif
+                </div>
+
+                <button type="submit" class="submit-btn">Create Account</button>
+            </form>
 
             <div class="or-divider">
                 <span>or</span>
@@ -383,8 +527,12 @@ body {
                     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                     <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                 </svg>
-                Login with Google
+                Sign up with Google
             </button>
+
+            <div class="login-link">
+                Already have an account? <a href="/login">Login here</a>
+            </div>
 
         </div>
     </div>
@@ -392,11 +540,66 @@ body {
     <!-- RIGHT -->
     <div class="right">
         <div class="illustration">
-            <div class="laptop"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTZ_K63znAUycV5lAPb_c7aU1N3dMMtGkZ_A&s"></div>
+            <div class="laptop"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTZ_K63znAUycV5lAPb_c7aU1N3dMMtGkZ_A&s" alt="laptop"></div>
         </div>
     </div>
 
 </div>
 
+<script>
+function checkPassword() {
+    const password = document.getElementById('password').value;
+    
+    // Check length
+    const lengthCheck = document.getElementById('length');
+    if (password.length >= 8) {
+        lengthCheck.classList.add('met');
+    } else {
+        lengthCheck.classList.remove('met');
+    }
+    
+    // Check uppercase
+    const uppercaseCheck = document.getElementById('uppercase');
+    if (/[A-Z]/.test(password)) {
+        uppercaseCheck.classList.add('met');
+    } else {
+        uppercaseCheck.classList.remove('met');
+    }
+    
+    // Check lowercase
+    const lowercaseCheck = document.getElementById('lowercase');
+    if (/[a-z]/.test(password)) {
+        lowercaseCheck.classList.add('met');
+    } else {
+        lowercaseCheck.classList.remove('met');
+    }
+    
+    // Check number
+    const numberCheck = document.getElementById('number');
+    if (/\d/.test(password)) {
+        numberCheck.classList.add('met');
+    } else {
+        numberCheck.classList.remove('met');
+    }
+    
+    // Check special character
+    const specialCheck = document.getElementById('special');
+    if (/[@$!%*?&]/.test(password)) {
+        specialCheck.classList.add('met');
+    } else {
+        specialCheck.classList.remove('met');
+    }
+}
+
+// Run check on page load if there's a password in the field
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordField = document.getElementById('password');
+    if (passwordField && passwordField.value) {
+        checkPassword();
+    }
+});
+</script>
+
 </body>
 </html>
+
