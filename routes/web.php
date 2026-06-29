@@ -15,3 +15,7 @@ Route::get('/signup', function () {
 Route::get('/reset', function () {
     return view('Reset');
 });
+
+Route::get('/forgetpassword', function () {
+    return view('Forget');
+});
