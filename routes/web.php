@@ -11,3 +11,7 @@ Route::get('/login', function () {
 Route::get('/signup', function () {
     return view('signup');
 });
+
+Route::get('/reset', function () {
+    return view('Reset');
+});
