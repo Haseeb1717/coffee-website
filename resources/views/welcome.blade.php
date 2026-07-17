@@ -36,120 +36,7 @@
       overflow-x: hidden;
     }
 
-    /* Header */
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 100;
-      padding: 1.2rem 5%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: linear-gradient(to bottom, rgba(26, 15, 5, 0.95), transparent);
-      transition: all 0.4s ease;
-    }
-
-    header.scrolled {
-      background: rgba(26, 15, 5, 0.98);
-      backdrop-filter: blur(15px);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
-      padding: 0.8rem 5%;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      text-decoration: none;
-      color: var(--text-light);
-    }
-
-    .logo-icon {
-      width: 50px;
-      height: 50px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-light));
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.6rem;
-      box-shadow: 0 4px 15px rgba(200, 168, 122, 0.3);
-    }
-
-    .logo-text {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-
-    .logo-text span {
-      color: var(--accent);
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 3rem;
-      list-style: none;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: var(--text-light);
-      font-weight: 400;
-      font-size: 0.95rem;
-      position: relative;
-      transition: color 0.3s ease;
-      letter-spacing: 0.5px;
-    }
-
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -6px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: var(--accent);
-      transition: width 0.3s ease;
-    }
-
-    .nav-links a:hover {
-      color: var(--accent);
-    }
-
-    .nav-links a:hover::after {
-      width: 100%;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-    }
-
-    .header-btn {
-      background: linear-gradient(135deg, var(--accent), #B8976A);
-      color: var(--primary-bg);
-      border: none;
-      padding: 0.75rem 1.8rem;
-      border-radius: 30px;
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(200, 168, 122, 0.25);
-    }
-
-    .header-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(200, 168, 122, 0.4);
-    }
-
+=
     /* Hero Section */
     .hero {
       min-height: 150vh;
@@ -630,30 +517,6 @@
       box-shadow: 0 5px 20px rgba(200, 168, 122, 0.4);
     }
 
-    /* Footer */
-    footer {
-      padding: 4rem 5% 2rem;
-      background: var(--secondary-bg);
-      text-align: center;
-    }
-
-    .footer-logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--text-light);
-      margin-bottom: 1.5rem;
-    }
-
-    .footer-logo span {
-      color: var(--accent);
-    }
-
-    .footer-text {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
     /* Mobile Menu */
     .menu-toggle {
       display: none;
@@ -742,16 +605,7 @@
     }
 
     @media (max-width: 480px) {
-      .logo-text {
-        font-size: 1.3rem;
-      }
-
-      .logo-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 1.3rem;
-      }
-
+     
       .hero-image-container {
         width: 220px;
         height: 220px;
@@ -801,32 +655,7 @@
       id="stickyCoffeeImg">
     
   </div>
-
-  <!-- Header -->
-  <header id="header">
-    <a href="#" class="logo">
-      <div class="logo-icon">&#9749;</div>
-      <div class="logo-text">coffee<span>& Bean</span></div>
-    </a>
-
-    <ul class="nav-links">
-      <li><a href="#">Home</a></li>
-      <li><a href="#">Menu</a></li>
-      <li><a href="#">About</a></li>
-      <li><a href="#">Shop</a></li>
-      <li><a href="#">Contact</a></li>
-    </ul>
-
-    <div class="header-actions">
-      <button class="header-btn">Order Now</button>
-    </div>
-
-    <button class="menu-toggle" aria-label="Menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </header>
+   @include('partial.navbar')
 
   <!-- Hero Section -->
   <section class="hero" id="heroSection">

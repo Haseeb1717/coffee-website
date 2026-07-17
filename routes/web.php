@@ -32,8 +32,22 @@ Route::post('/resend-verification-email', [AuthController::class, 'resendVerific
 // Protected Routes - Require Auth & Email Verification
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
+        if (auth()->user()?->role === 'admin') {
+            abort(403, 'Admins cannot access the customer dashboard.');
+        }
+
         return view('dashboard');
     })->name('dashboard');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/admin/dashboard', function () {
+        if (auth()->user()?->role !== 'admin') {
+            abort(403, 'Only admins can access the admin dashboard.');
+        }
+
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
 });
 
 Route::get('/reset', function () {

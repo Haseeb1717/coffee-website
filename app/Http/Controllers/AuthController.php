@@ -42,8 +42,10 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $user = auth()->user();
+
             // Check if email is verified
-            if (!auth()->user()->email_verified_at) {
+            if (!$user->email_verified_at) {
                 Auth::logout();
                 return redirect('/verify-email')->with('warning', 'Please verify your email first.');
             }
@@ -52,6 +54,11 @@ class AuthController extends Controller
             RateLimiter::clear($this->throttleKey($request));
             
             $request->session()->regenerate();
+
+            if ($user->role === 'admin') {
+                return redirect('/admin/dashboard')->with('success', 'Welcome back, admin!');
+            }
+
             return redirect('/dashboard')->with('success', 'Logged in successfully!');
         }
 
@@ -120,6 +127,7 @@ class AuthController extends Controller
                 'name' => trim($validated['name']),
                 'email' => strtolower(trim($validated['email'])),
                 'password' => Hash::make($validated['password']),
+                'role' => 'customer',
             ]);
 
             // Auto-login user
