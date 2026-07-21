@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Coffee POS Dashboard</title>
-    <style>
+  <meta charset="UTF-8">
+  <title>Coffee Manager Dashboard</title>
+      <style>
         *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
@@ -301,7 +300,6 @@
             padding: 24px 28px;
             display: grid;
             gap: 18px;
-            overflow: auto;
         }
 
         .card {
@@ -535,15 +533,174 @@
     </style>
 </head>
 <body>
-    <div class="app-shell">
-        @include('partial.sidebar')
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Coffee Shop POS</title>
+  <style>
+    /* === Your uploaded style (_style_.txt) === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background:white; color:#2c1a0e; margin:0; }
+    .app-shell { display:flex; min-height:100vh; }
+    .main-panel { flex:1; display:flex; flex-direction:column; background-color:white; }
+    .content { flex:1; padding:24px 28px; display:grid; gap:18px; grid-template-columns:2fr 1fr; }
 
-        <div class="main-panel">
-            @include('partial.header')
-            @include('partial.main')
+    /* Categories */
+    .categories { background:white; color:black; padding:20px; border-radius:12px; }
+    .categories h3 { margin-bottom:15px; }
+    .categories ul { list-style:none; padding:0; }
+    .categories li { padding:10px; margin-bottom:8px; background:white; border-radius:6px; cursor:pointer; transition:background 0.2s; }
+    .categories li:hover { background:#c8703a; }
+
+    /* Menu list */
+    .menu-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; margin-top:20px; }
+    .menu-item { background:#fff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1); overflow:hidden; display:flex; flex-direction:column; }
+    .menu-item img { width:100%; height:140px; object-fit:cover; }
+    .menu-item-content { padding:15px; }
+    .menu-item h4 { margin:0 0 8px; font-size:16px; color:#2c1a0e; }
+    .menu-item p { font-size:13px; color:#7a5a45; margin-bottom:8px; }
+    .menu-item .price { font-weight:bold; color:#c8703a; font-size:14px; }
+
+    /* Options (mood, size, sugar, ice) */
+    .options { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+    .option { background:#ede8e3; padding:4px 8px; border-radius:6px; font-size:12px; cursor:pointer; }
+    .option:hover { background:#c8a882; }
+
+    /* Billing panel */
+    .billing { background:#fff; border-radius:12px; padding:20px; box-shadow:0 4px 12px rgba(0,0,0,0.1); display:flex; flex-direction:column; }
+    .billing h3 { margin-bottom:12px; }
+    .bill-items { flex:1; }
+    .bill-items p { font-size:14px; margin:4px 0; }
+    .bill-summary { margin-top:12px; font-size:14px; }
+    .bill-summary strong { display:block; margin-top:4px; }
+    .payment-methods { margin-top:16px; }
+    .payment-methods button { margin-right:8px; padding:8px 12px; border:none; border-radius:6px; background:#c8703a; color:#fff; cursor:pointer; }
+    .payment-methods button:hover { background:white; }
+    .print-btn { margin-top:16px; padding:10px; border:none; border-radius:6px; background:#c8703a; color:black; cursor:pointer; }
+    .print-btn:hover { background:#3d2410; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Sidebar include -->
+    @include('partial.sidebar')
+
+    <!-- Main Panel -->
+    <div class="main-panel">
+      <!-- Header include -->
+      @include('partial.header')
+
+      <!-- Main content include -->
+      @include('partial.main')
+
+      <!-- Extra Features: Categories + Menu + Billing -->
+      <main class="content">
+        <!-- Left side: categories + menu -->
+        <div>
+          <aside class="categories">
+            <h3>Choose Category</h3>
+            <ul>
+              <li>All</li>
+              <li>Coffee</li>
+              <li>Juice</li>
+              <li>Milk Based</li>
+              <li>Snack</li>
+              <li>Rice</li>
+              <li>Dessert</li>
+            </ul>
+          </aside>
+
+          <section class="menu-list">
+            <div class="menu-item">
+              <img src="caramel-frappuccino.jpg" alt="Caramel Frappuccino">
+              <div class="menu-item-content">
+                <h4>Caramel Frappuccino</h4>
+                <p>Caramel syrup with coffee, milk, and whipped cream.</p>
+                <span class="price">€3,95</span>
+                <div class="options">
+                  <div class="option">Mood 😊</div>
+                  <div class="option">Size M</div>
+                  <div class="option">Sugar 50%</div>
+                  <div class="option">Ice 50%</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="menu-item">
+              <img src="chocolate-frappuccino.jpg" alt="Chocolate Frappuccino">
+              <div class="menu-item-content">
+                <h4>Chocolate Frappuccino</h4>
+                <p>Sweet chocolate with coffee, milk, and whipped cream.</p>
+                <span class="price">€4,51</span>
+                <div class="options">
+                  <div class="option">Mood 🍫</div>
+                  <div class="option">Size L</div>
+                  <div class="option">Sugar 75%</div>
+                  <div class="option">Ice 25%</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="menu-item">
+              <img src="latte-frappuccino.jpg" alt="Coffee Latte Frappuccino">
+              <div class="menu-item-content">
+                <h4>Coffee Latte Frappuccino</h4>
+                <p>Special coffee, choco cream, and whipped cream.</p>
+                <span class="price">€4,79</span>
+                <div class="options">
+                  <div class="option">Mood ☕</div>
+                  <div class="option">Size S</div>
+                  <div class="option">Sugar 25%</div>
+                  <div class="option">Ice 50%</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="menu-item">
+              <img src="peppermint-macchiato.jpg" alt="Peppermint Macchiato">
+              <div class="menu-item-content">
+                <h4>Peppermint Macchiato</h4>
+                <p>Fresh peppermint mixed with choco and blended cream.</p>
+                <span class="price">€5,34</span>
+                <div class="options">
+                  <div class="option">Mood 🌿</div>
+                  <div class="option">Size M</div>
+                  <div class="option">Sugar 50%</div>
+                  <div class="option">Ice 75%</div>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
-    </div>
 
-    @include('partial.footer')
+        <!-- Right side: billing -->
+        <div class="billing">
+          <h3>Bills - Cashier: Jelly Grande</h3>
+          <div class="bill-items">
+            <p>Caramel Frappuccino ×1 = €3,95</p>
+            <p>Chocolate Frappuccino ×2 = €9,02</p>
+            <p>Peppermint Macchiato ×1 = €5,34</p>
+          </div>
+          <div class="bill-summary">
+            <strong>Subtotal: €18,31</strong>
+            <strong>Tax (10%): €1,831</strong>
+            <strong>Total: €20,141</strong>
+          </div>
+          <div class="payment-methods">
+            <button>Cash</button>
+            <button>Debit Card</button>
+            <button>Credit Card</button>
+          </div>
+          <button class="print-btn">Print Bills</button>
+        </div>
+      </main>
+
+      <!-- Footer include -->
+      @include('partial.footer')
+    </div>
+  </div>
 </body>
 </html>
+
+
