@@ -964,35 +964,17 @@
         <div class="shelf-inner">
           <div class="shelf-products">
 
-            <div class="product-slot">
-              <img src="https://images.pexels.com/photos/2226458/pexels-photo-2226458.jpeg?auto=compress&cs=tinysrgb&w=200&h=300&fit=crop" alt="Dark Roast">
-              <span class="slot-label">Dark Roast</span>
-              <button class="slot-cart-btn" onclick="addToCart('Dark Roast')"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61H19a2 2 0 001.95-1.57l1.54-7.42H6"/></svg></button>
-            </div>
-
-            <div class="product-slot">
-              <img src="https://images.pexels.com/photos/1695052/pexels-photo-1695052.jpeg?auto=compress&cs=tinysrgb&w=200&h=300&fit=crop" alt="House Blend">
-              <span class="slot-label">House Blend</span>
-              <button class="slot-cart-btn" onclick="addToCart('House Blend')"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61H19a2 2 0 001.95-1.57l1.54-7.42H6"/></svg></button>
-            </div>
-
-            <div class="product-slot">
-              <img src="https://images.pexels.com/photos/894695/pexels-photo-894695.jpeg?auto=compress&cs=tinysrgb&w=200&h=300&fit=crop" alt="Arabica">
-              <span class="slot-label">Arabica</span>
-              <button class="slot-cart-btn" onclick="addToCart('Arabica')"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61H19a2 2 0 001.95-1.57l1.54-7.42H6"/></svg></button>
-            </div>
-
-            <div class="product-slot">
-              <img src="https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=200&h=300&fit=crop" alt="Single Origin">
-              <span class="slot-label">Single Origin</span>
-              <button class="slot-cart-btn" onclick="addToCart('Single Origin')"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61H19a2 2 0 001.95-1.57l1.54-7.42H6"/></svg></button>
-            </div>
-
-            <div class="product-slot">
-              <img src="https://images.pexels.com/photos/585753/pexels-photo-585753.jpeg?auto=compress&cs=tinysrgb&w=200&h=300&fit=crop" alt="Gold Reserve">
-              <span class="slot-label">Gold Reserve</span>
-              <button class="slot-cart-btn" onclick="addToCart('Gold Reserve')"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61H19a2 2 0 001.95-1.57l1.54-7.42H6"/></svg></button>
-            </div>
+            @forelse ($coffees->take(5) as $coffee)
+              <div class="product-slot">
+                <img src="{{ $coffee->image_url ?: 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=200&h=300&fit=crop' }}" alt="{{ $coffee->name }}">
+                <span class="slot-label">{{ $coffee->name }}</span>
+                <button class="slot-cart-btn" onclick="addToCart('{{ addslashes($coffee->name) }}')"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61H19a2 2 0 001.95-1.57l1.54-7.42H6"/></svg></button>
+              </div>
+            @empty
+              <div class="product-slot">
+                <span class="slot-label">No coffee items yet</span>
+              </div>
+            @endforelse
 
           </div>
         </div>
@@ -1095,7 +1077,7 @@
 
     </div><!-- /shelf-unit -->
   </div><!-- /shelf-cabinet -->
-@include('partial.footer')
+@include('partial.navbar')
   <!--  TOAST -->
   <div class="toast" id="toast">&#10003; <span id="toastMsg">Added to cart</span></div>
 

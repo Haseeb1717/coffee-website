@@ -2,14 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\CoffeeController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/menu', function () {
-    return view('menu');
-})->name('menu');
+Route::get('/menu', [CoffeeController::class, 'index'])->name('menu');
 
 Route::get('/cart', function () {
     return view('cart');
@@ -41,13 +41,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/admin/dashboard', function () {
+    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
+    Route::get('/admin/addcoffee', function () {
         if (auth()->user()?->role !== 'admin') {
-            abort(403, 'Only admins can access the admin dashboard.');
+            abort(403, 'Only admins can access this page.');
         }
 
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+        $coffees = \App\Models\Coffee::latest()->get();
+
+        return view('admin.Addcoffee', compact('coffees'));
+    })->name('admin.addcoffee');
+
+    Route::post('/admin/addcoffee', [CoffeeController::class, 'store'])->name('admin.addcoffee.store');
+    Route::put('/admin/addcoffee/{coffee}', [CoffeeController::class, 'update'])->name('admin.addcoffee.update');
+    Route::delete('/admin/addcoffee/{coffee}', [CoffeeController::class, 'destroy'])->name('admin.addcoffee.destroy');
 });
 
 Route::get('/reset', function () {

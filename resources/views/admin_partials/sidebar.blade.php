@@ -2,15 +2,15 @@
     <div class="sidebar-logo">K</div>
 
     <nav class="sidebar-nav">
-        <div class="nav-item active" title="Dashboard">
+        <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" title="Dashboard" style="text-decoration: none; color: inherit;">
             <svg viewBox="0 0 24 24">
                 <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
                 <path d="M9 21V12h6v9"/>
             </svg>
             <span class="label">Home</span>
-        </div>
+        </a>
 
-        <div class="nav-item" title="Menu">
+        <a href="{{ route('admin.addcoffee') }}" class="nav-item {{ request()->routeIs('admin.addcoffee') ? 'active' : '' }}" title="Menu" style="text-decoration: none; color: inherit;">
             <svg viewBox="0 0 24 24">
                 <rect x="3" y="3" width="7" height="7" rx="1"/>
                 <rect x="14" y="3" width="7" height="7" rx="1"/>
@@ -18,7 +18,7 @@
                 <rect x="14" y="14" width="7" height="7" rx="1"/>
             </svg>
             <span class="label">Menu</span>
-        </div>
+        </a>
 
         <div class="nav-item" title="History">
             <svg viewBox="0 0 24 24">
