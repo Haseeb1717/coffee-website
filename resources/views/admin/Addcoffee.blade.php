@@ -204,6 +204,10 @@
     padding:40px 20px;overflow-y:auto;
   }
   .modal-overlay.open{display:flex;animation:fadeIn .2s ease}
+  .modal-overlay.form-page{position:static;display:block;background:none;padding:0;overflow:visible}
+  .modal-overlay.form-page .modal{max-width:760px;margin:0 auto;box-shadow:0 8px 24px rgba(26,14,7,.12)}
+  .modal-overlay.form-page .modal-body{max-height:none}
+  .modal-overlay.form-page .modal-close{display:none}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
   .modal{
     background:var(--surface);border-radius:22px;
@@ -385,13 +389,14 @@
 
 
 <!-- ===== Drop this inside your .content main area ===== -->
+@if (!$formMode)
 <div class="menu-page">
 
   <!-- Page header -->
   <div class="page-head">
     <div>
-      <h1>Menu Manager</h1>
-      <p>Manage your coffee shop's menu items</p>
+      <h1>{{ __('Menu Manager') }}</h1>
+      <p>{{ __('Manage your coffee shop\'s menu items') }}</p>
     </div>
     @if (session('success'))
       <div class="alert-success" style="padding:10px 14px;border-radius:10px;background:#e7f7ea;color:#1f6f3b;font-weight:600;">{{ session('success') }}</div>
@@ -399,12 +404,12 @@
     <div class="head-actions">
       <button class="btn">
         <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Export
+        {{ __('Export') }}
       </button>
-      <button class="btn btn-primary" onclick="openModal()">
+      <a class="btn btn-primary" href="{{ route('admin.coffees.create') }}">
         <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Add Coffee
-      </button>
+        {{ __('Add Coffee') }}
+      </a>
     </div>
   </div>
 
@@ -412,19 +417,19 @@
   <div class="stats-strip">
     <div class="stat-mini">
       <div class="sm-icon sm-1">☕</div>
-      <div><div class="sm-val">24</div><div class="sm-label">Total Items</div></div>
+      <div><div class="sm-val">{{ $coffees->count() }}</div><div class="sm-label">{{ __('Total Items') }}</div></div>
     </div>
     <div class="stat-mini">
       <div class="sm-icon sm-2">✓</div>
-      <div><div class="sm-val">21</div><div class="sm-label">Available</div></div>
+      <div><div class="sm-val">{{ $coffees->where('is_available', true)->count() }}</div><div class="sm-label">{{ __('Available') }}</div></div>
     </div>
     <div class="stat-mini">
       <div class="sm-icon sm-3">★</div>
-      <div><div class="sm-val">6</div><div class="sm-label">Featured</div></div>
+      <div><div class="sm-val">{{ $coffees->where('is_featured', true)->count() }}</div><div class="sm-label">{{ __('Featured') }}</div></div>
     </div>
     <div class="stat-mini">
       <div class="sm-icon sm-4">⚠</div>
-      <div><div class="sm-val">3</div><div class="sm-label">Unavailable</div></div>
+      <div><div class="sm-val">{{ $coffees->where('is_available', false)->count() }}</div><div class="sm-label">{{ __('Unavailable') }}</div></div>
     </div>
   </div>
 
@@ -433,10 +438,10 @@
     <div class="toolbar-left">
       <div class="search-box">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Search menu..." />
+        <input type="text" placeholder="{{ __('Search menu...') }}" />
       </div>
       <div class="filter-chips">
-        <span class="fchip active">All</span>
+        <span class="fchip active">{{ __('All') }}</span>
         <span class="fchip">Hot Coffee</span>
         <span class="fchip">Iced</span>
         <span class="fchip">Espresso</span>
@@ -447,7 +452,7 @@
 
   <!-- Menu grid -->
   <div class="menu-grid" id="menuGrid">
-    @foreach ($coffees as $coffee)
+    @forelse ($coffees as $coffee)
       <div class="menu-card">
         <div class="mc-image">
           <img src="{{ $coffee->image_url ?: 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=400' }}" alt="{{ $coffee->name }}" />
@@ -463,37 +468,40 @@
           </div>
         </div>
         <div class="mc-body">
-          <div class="mc-cat">{{ $coffee->category }}</div>
-          <div class="mc-name">{{ $coffee->name }}</div>
-          <div class="mc-desc">{{ $coffee->description ?: 'Freshly prepared item from the admin menu.' }}</div>
+          <div class="mc-cat">{{ $coffee->localized_category }}</div>
+          <div class="mc-name">{{ $coffee->localized_name }}</div>
+          <div class="mc-desc">{{ $coffee->localized_description ?: 'Freshly prepared item from the admin menu.' }}</div>
           <div class="mc-foot">
             <div class="mc-price">${{ number_format($coffee->price, 2) }}</div>
-            <div class="mc-sizes"><span class="mc-size">{{ $coffee->roast_type ?: 'Regular' }}</span></div>
+            <div class="mc-sizes"><span class="mc-size">{{ $coffee->cup_size ?: ($coffee->roast_type ?: 'Medium') }}</span></div>
           </div>
           <div class="mc-actions" style="display:flex;gap:8px;margin-top:12px;">
-            <button type="button" class="btn" style="flex:1;justify-content:center;" onclick="openEditModal({{ $coffee->id }}, '{{ addslashes($coffee->name) }}', '{{ addslashes($coffee->description ?? '') }}', '{{ addslashes($coffee->category ?? '') }}', '{{ addslashes($coffee->roast_type ?? '') }}', '{{ $coffee->price }}', '{{ addslashes($coffee->image_url ?? '') }}', '{{ $coffee->is_available ? '1' : '0' }}', '{{ $coffee->is_featured ? '1' : '0' }}', '{{ $coffee->is_customizable ? '1' : '0' }}')">Edit</button>
-            <form method="POST" action="{{ route('admin.addcoffee.destroy', $coffee) }}" onsubmit="return confirm('Delete this coffee item?')" style="flex:1;">
+            <a class="btn" style="flex:1;justify-content:center;" href="{{ route('admin.coffees.edit', $coffee) }}">{{ __('Edit') }}</a>
+            <form method="POST" action="{{ route('admin.coffees.destroy', $coffee) }}" onsubmit="return confirm(@js(__('Delete this coffee item?')))" style="flex:1;">
               @csrf
               @method('DELETE')
-              <button type="submit" class="btn" style="width:100%;justify-content:center;background:#fce8e8;color:#b42318;">Delete</button>
+              <button type="submit" class="btn" style="width:100%;justify-content:center;background:#fce8e8;color:#b42318;">{{ __('Delete') }}</button>
             </form>
           </div>
         </div>
       </div>
-    @endforeach
+    @empty
+      <div style="grid-column:1/-1;padding:48px 20px;text-align:center;color:var(--text-3);">No coffee items have been added yet.</div>
+    @endforelse
 
     <!-- Add new card -->
-    <div class="add-card" onclick="openModal()">
+    <a class="add-card" href="{{ route('admin.coffees.create') }}" style="text-decoration:none;">
       <div class="ac-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-      <div class="ac-title">Add New Item</div>
-      <div class="ac-sub">Create a new coffee or pastry</div>
-    </div>
+      <div class="ac-title">{{ __('Add New Item') }}</div>
+      <div class="ac-sub">{{ __('Create a new coffee or pastry') }}</div>
+    </a>
 
   </div>
-</div>
+ </div>
+@endif
 
-<!-- ===== Add Coffee Modal ===== -->
-<div class="modal-overlay" id="modalOverlay">
+<!-- ===== Add/Edit Coffee Form ===== -->
+<div class="modal-overlay {{ $formMode ? 'open form-page' : '' }}" id="modalOverlay">
   <div class="modal">
     <div class="modal-head">
       <div class="mh-left">
@@ -501,36 +509,48 @@
           <svg viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
         <div>
-          <h2>Add New Coffee</h2>
-          <div class="mh-sub">Fill in the details to add this item to your menu</div>
+          <h2>{{ $coffee ? __('Edit Coffee') : __('Add New Coffee') }}</h2>
+          <div class="mh-sub">{{ $coffee ? 'Update the details for this item' : 'Fill in the details to add this item to your menu' }}</div>
         </div>
       </div>
-      <button class="modal-close" onclick="closeModal()">
+      <a class="modal-close" href="{{ route('admin.coffees.index') }}">
         <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+      </a>
     </div>
 
     <div class="modal-body">
 
       <!-- Basic info -->
-      <div class="m-section">Basic Information</div>
+      <div class="m-section">{{ __('Basic Information') }}</div>
 
-      <form method="POST" id="coffeeForm" action="{{ route('admin.addcoffee.store') }}" enctype="multipart/form-data">
+      <form method="POST" id="coffeeForm" action="{{ $coffee ? route('admin.coffees.update', $coffee) : route('admin.coffees.store') }}" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name="_method" id="formMethod" value="POST">
+        @if ($coffee) @method('PUT') @endif
+        @if ($errors->any())
+          <div class="alert-success" style="margin-bottom:18px;background:#fce8e8;color:#b42318;">{{ __('Please correct the form errors.') }}</div>
+        @endif
+<div class="field">
+  <label>{{ __('Coffee Name') }} <span class="req">*</span></label>
+  <input class="input" name="name" id="coffeeName" value="{{ old('name', $coffee?->name) }}" placeholder="e.g. Caramel Macchiato" required />
+</div>
 
-      <div class="field">
-        <label>Coffee Name <span class="req">*</span></label>
-        <input class="input" name="name" id="coffeeName" placeholder="e.g. Caramel Macchiato" required />
-      </div>
+<div class="field">
+  <label>الاسم (Arabic Name)</label>
+  <input class="input" name="name_ar" id="coffeeNameAr" dir="rtl" value="{{ old('name_ar', $coffee?->name_ar) }}" placeholder="مثال: كراميل ماكياتو" />
+</div>
 
-      <div class="field">
-        <label>Description</label>
-        <textarea class="textarea" name="description" id="coffeeDescription" placeholder="Describe the taste, ingredients, and what makes it special..."></textarea>
-        <div class="hint">Max 200 characters — shown on the menu card</div>
-      </div>
+<div class="field">
+  <label>{{ __('Description') }}</label>
+  <textarea class="textarea" name="description" id="coffeeDescription" placeholder="Describe the taste, ingredients, and what makes it special...">{{ old('description', $coffee?->description) }}</textarea>
+  <div class="hint">Max 200 characters — shown on the menu card</div>
+</div>
 
-      <div class="row-2">
+<div class="field">
+  <label>الوصف (Arabic Description)</label>
+  <textarea class="textarea" name="description_ar" id="coffeeDescriptionAr" dir="rtl" placeholder="اكتب الوصف بالعربية...">{{ old('description_ar', $coffee?->description_ar) }}</textarea>
+</div>
+        <div class="row-2">
+          
         <div class="field">
           <label>Category <span class="req">*</span></label>
           <select class="select" name="category" id="coffeeCategory">
@@ -544,18 +564,20 @@
         </div>
         <div class="field">
           <label>Roast Type</label>
-          <select class="select" name="roast_type" id="coffeeRoastType">
-            <option>Medium Roast</option>
-            <option>Light Roast</option>
-            <option>Dark Roast</option>
-            <option>Blonde</option>
-            <option>N/A</option>
+          <select class="select" name="cup_size" id="coffeeCupSize" required>
+            @foreach (['Small', 'Medium', 'Large'] as $size)
+              <option value="{{ $size }}" @selected(old('cup_size', $coffee?->cup_size ?: 'Medium') === $size)>{{ $size }}</option>
+            @endforeach
           </select>
         </div>
+      <div class="field">
+  <label>التصنيف (Arabic Category)</label>
+  <input class="input" name="category_ar" id="coffeeCategoryAr" dir="rtl" placeholder="مثال: قهوة ساخنة" />
+</div>
       </div>
 
       <!-- Pricing -->
-      <div class="m-section">Pricing &amp; Sizes</div>
+      <div class="m-section">{{ __('Pricing & Sizes') }}</div>
 
       <div class="field">
         <label>Available Sizes <span class="req">*</span></label>
@@ -576,15 +598,15 @@
       </div>
 
       <div class="field">
-        <label>Price</label>
+        <label>{{ __('Price') }}</label>
         <div class="input-prefix">
           <span class="pre">$</span>
-          <input class="input" name="price" id="coffeePrice" placeholder="0.00" required />
+          <input class="input" name="price" id="coffeePrice" value="{{ old('price', $coffee?->price) }}" placeholder="0.00" required />
         </div>
       </div>
 
       <div class="field">
-        <label>Upload Image</label>
+        <label>{{ __('Upload Image') }}</label>
         <input class="input" type="file" name="image" id="coffeeImage" accept="image/*" />
         <div class="hint">PNG, JPG, WEBP up to 2MB</div>
       </div>
@@ -674,13 +696,13 @@
     <div class="modal-foot">
       <div class="foot-note">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        Changes go live immediately
+        {{ __('Changes go live immediately') }}
       </div>
       <div class="right">
-        <button class="btn" type="button" onclick="closeModal()">Cancel</button>
+        <a class="btn" href="{{ route('admin.coffees.index') }}">{{ __('Cancel') }}</a>
         <button class="btn btn-primary" type="submit">
           <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-          Add to Menu
+          {{ $coffee ? __('Save Changes') : __('Add to Menu') }}
         </button>
       </form>
       </div>
@@ -693,7 +715,7 @@
 
   function openModal(){
     currentCoffeeId = null;
-    document.getElementById('coffeeForm').action = '{{ route('admin.addcoffee.store') }}';
+    document.getElementById('coffeeForm').action = '{{ route('admin.coffees.store') }}';
     document.getElementById('formMethod').value = 'POST';
     document.querySelector('.modal-head h2').textContent = 'Add New Coffee';
     document.querySelector('.mh-sub').textContent = 'Fill in the details to add this item to your menu';
@@ -708,8 +730,7 @@
     document.getElementById('modalOverlay').classList.add('open');
     document.body.style.overflow='hidden';
   }
-
-  function openEditModal(id, name, description, category, roastType, price, imageUrl, isAvailable, isFeatured, isCustomizable){
+function openEditModal(id, name, nameAr, description, descriptionAr, category, categoryAr, roastType, price, imageUrl, isAvailable, isFeatured, isCustomizable){
     currentCoffeeId = id;
     document.getElementById('coffeeForm').action = '/admin/addcoffee/' + id;
     document.getElementById('formMethod').value = 'PUT';
@@ -717,8 +738,11 @@
     document.querySelector('.mh-sub').textContent = 'Update the details for this item';
     document.querySelector('.btn-primary[type="submit"]').innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Save Changes';
     document.getElementById('coffeeName').value = name;
+    document.getElementById('coffeeNameAr').value = nameAr;
     document.getElementById('coffeeDescription').value = description;
+    document.getElementById('coffeeDescriptionAr').value = descriptionAr;
     document.getElementById('coffeeCategory').value = category;
+    document.getElementById('coffeeCategoryAr').value = categoryAr;
     document.getElementById('coffeeRoastType').value = roastType;
     document.getElementById('coffeePrice').value = price;
     document.getElementById('coffeeImage').value = '';
@@ -731,8 +755,7 @@
     if (isCustomizable === '1') document.querySelector('.toggle[data-input="is_customizable_input"]').classList.add('on');
     document.getElementById('modalOverlay').classList.add('open');
     document.body.style.overflow='hidden';
-  }
-
+}
   function closeModal(){
     document.getElementById('modalOverlay').classList.remove('open');
     document.body.style.overflow='';
@@ -744,7 +767,7 @@
     input.value = input.value === '1' ? '0' : '1';
     el.classList.toggle('on');
   }
-  document.getElementById('modalOverlay').addEventListener('click',function(e){
+  document.getElementById('modalOverlay')?.addEventListener('click',function(e){
     if(e.target===this) closeModal();
   });
   document.addEventListener('keydown',function(e){

@@ -32,22 +32,61 @@ class CoffeeController extends Controller
         return $coffee?->image_url;
     }
 
+    public function adminIndex()
+    {
+        $this->ensureAdmin();
+
+        $coffees = Coffee::latest()->get();
+
+        return view('admin.Addcoffee', [
+            'coffees' => $coffees,
+            'formMode' => false,
+            'coffee' => null,
+        ]);
+    }
+
+    public function create()
+    {
+        $this->ensureAdmin();
+
+        return view('admin.Addcoffee', [
+            'coffees' => collect(),
+            'formMode' => true,
+            'coffee' => null,
+        ]);
+    }
+
+    public function edit(Coffee $coffee)
+    {
+        $this->ensureAdmin();
+
+        return view('admin.Addcoffee', [
+            'coffees' => collect(),
+            'formMode' => true,
+            'coffee' => $coffee,
+        ]);
+    }
+
     public function store(Request $request)
     {
         $this->ensureAdmin();
 
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:500',
-            'category' => 'nullable|string|max:100',
-            'roast_type' => 'nullable|string|max:100',
-            'price' => 'required|numeric|min:0',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'image_url' => 'nullable|string|max:500',
-            'is_available' => 'nullable|boolean',
-            'is_featured' => 'nullable|boolean',
-            'is_customizable' => 'nullable|boolean',
-        ]);
+$data = $request->validate([
+    'name' => 'required|string|max:255',
+    'name_ar' => 'nullable|string|max:255',
+    'description' => 'nullable|string|max:500',
+    'description_ar' => 'nullable|string|max:500',
+    'category' => 'nullable|string|max:100',
+    'category_ar' => 'nullable|string|max:100',
+    'roast_type' => 'nullable|string|max:100',
+    'cup_size' => 'nullable|string|max:100',
+    'price' => 'required|numeric|min:0',
+    'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+    'image_url' => 'nullable|string|max:500',
+    'is_available' => 'nullable|boolean',
+    'is_featured' => 'nullable|boolean',
+    'is_customizable' => 'nullable|boolean',
+]);
 
         $data['image_url'] = $this->resolveImagePath($request);
 
@@ -62,9 +101,13 @@ class CoffeeController extends Controller
 
         $data = $request->validate([
             'name' => 'required|string|max:255',
+            'name_ar' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:500',
+            'description_ar' => 'nullable|string|max:500',
             'category' => 'nullable|string|max:100',
+            'category_ar' => 'nullable|string|max:100',
             'roast_type' => 'nullable|string|max:100',
+            'cup_size' => 'nullable|string|max:100',
             'price' => 'required|numeric|min:0',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'image_url' => 'nullable|string|max:500',

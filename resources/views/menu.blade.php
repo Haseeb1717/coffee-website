@@ -123,9 +123,9 @@
 
             @forelse ($coffees->take(5) as $coffee)
               <div class="product-slot">
-                <img src="{{ $coffee->image_url ?: 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=200&h=300&fit=crop' }}" alt="{{ $coffee->name }}">
-                <span class="slot-label">{{ $coffee->name }}</span>
-                <button class="slot-cart-btn" onclick="addToCart('{{ addslashes($coffee->name) }}')"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61H19a2 2 0 001.95-1.57l1.54-7.42H6"/></svg></button>
+                <img src="{{ $coffee->image_url ?: 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=200&h=300&fit=crop' }}" alt="{{ $coffee->localized_name }}">
+                <span class="slot-label">{{ $coffee->localized_name }} · ${{ number_format($coffee->price, 2) }} · {{ $coffee->cup_size ?: 'Medium' }}</span>
+                <button class="slot-cart-btn" onclick="addToCart(@js($coffee->localized_name))"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61L19 16a2 2 0 001.95-1.57l1.54-7.42H6"/></svg></button>
               </div>
             @empty
               <div class="product-slot">
@@ -145,7 +145,8 @@
         </div>
       </div>
 
-      <!-- ── Shelf Row 2 ── -->
+      @if (false)
+      <!-- Legacy static shelf rows retained only as a layout reference. Database rows are rendered below. -->
       <div class="shelf-row">
         <div class="shelf-inner">
           <div class="shelf-products">
@@ -231,6 +232,24 @@
           <div class="cart-slot"><button class="shelf-cart-btn" onclick="addToCart('Premium Reserve')"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61H19a2 2 0 001.95-1.57l1.54-7.42H6"/></svg></button></div>
         </div>
       </div>
+      @endif
+
+      @foreach ($coffees->skip(5)->chunk(5) as $coffeeChunk)
+        <div class="shelf-row">
+          <div class="shelf-inner">
+            <div class="shelf-products">
+              @foreach ($coffeeChunk as $coffee)
+                <div class="product-slot">
+                  <img src="{{ $coffee->image_url ?: 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=200&h=300&fit=crop' }}" alt="{{ $coffee->localized_name }}">
+                  <span class="slot-label">{{ $coffee->localized_name }} · ${{ number_format($coffee->price, 2) }} · {{ $coffee->cup_size ?: 'Medium' }}</span>
+                  <button class="slot-cart-btn" onclick="addToCart(@js($coffee->localized_name))"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61H19a2 2 0 001.95-1.57l1.54-7.42H6"/></svg></button>
+                </div>
+              @endforeach
+            </div>
+          </div>
+          <div class="shelf-plank"></div>
+        </div>
+      @endforeach
 
     </div><!-- /shelf-unit -->
   </div><!-- /shelf-cabinet -->

@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\CoffeeController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\LocaleController;
 
 
 Route::get('/', function () {
@@ -45,16 +46,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
-    Route::get('/admin/addcoffee', function () {
-        if (auth()->user()?->role !== 'admin') {
-            abort(403, 'Only admins can access this page.');
-        }
+    Route::get('/admin/coffees', [CoffeeController::class, 'adminIndex'])->name('admin.coffees.index');
+    Route::get('/admin/coffees/create', [CoffeeController::class, 'create'])->name('admin.coffees.create');
+    Route::post('/admin/coffees', [CoffeeController::class, 'store'])->name('admin.coffees.store');
+    Route::get('/admin/coffees/{coffee}/edit', [CoffeeController::class, 'edit'])->name('admin.coffees.edit');
+    Route::put('/admin/coffees/{coffee}', [CoffeeController::class, 'update'])->name('admin.coffees.update');
+    Route::delete('/admin/coffees/{coffee}', [CoffeeController::class, 'destroy'])->name('admin.coffees.destroy');
 
-        $coffees = \App\Models\Coffee::latest()->get();
-
-        return view('admin.Addcoffee', compact('coffees'));
-    })->name('admin.addcoffee');
-
+    // Keep the old endpoints available for existing forms and bookmarks.
+    Route::get('/admin/addcoffee', [CoffeeController::class, 'adminIndex'])->name('admin.addcoffee');
     Route::post('/admin/addcoffee', [CoffeeController::class, 'store'])->name('admin.addcoffee.store');
     Route::put('/admin/addcoffee/{coffee}', [CoffeeController::class, 'update'])->name('admin.addcoffee.update');
     Route::delete('/admin/addcoffee/{coffee}', [CoffeeController::class, 'destroy'])->name('admin.addcoffee.destroy');
@@ -71,3 +71,5 @@ Route::get('/forgetpassword', function () {
 Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
 Route::get('/reviews/create', [ReviewController::class, 'create'])->name('reviews.create');
 Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+//this route is language 
+Route::get('/lang/{locale}', [LocaleController::class, 'switch'])->name('lang.switch');

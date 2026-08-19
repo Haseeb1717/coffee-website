@@ -244,6 +244,10 @@
       padding: 12px 16px;
     }
   }
+  .lang-switcher .active {
+    font-weight: bold;
+    text-decoration: underline;
+}
 </style>
 </head>
 <body>
@@ -274,7 +278,11 @@
     </svg>
   </button>
 </div>
-
+<div class="lang-switcher">
+    <a href="{{ route('lang.switch', 'en') }}" class="{{ app()->getLocale() == 'en' ? 'active' : '' }}">EN</a>
+    |
+    <a href="{{ route('lang.switch', 'ar') }}" class="{{ app()->getLocale() == 'ar' ? 'active' : '' }}">عربي</a>
+</div>
       <button class="icon-btn" id="cartBtn" aria-label="Cart">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="9" cy="21" r="1"></circle>

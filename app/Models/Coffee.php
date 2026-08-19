@@ -9,9 +9,13 @@ class Coffee extends Model
 {
     protected $fillable = [
         'name',
+        'name_ar',       
         'description',
-        'category',
+        'description_ar',
+       'category',
+        'category_ar',       
         'roast_type',
+        'cup_size',
         'price',
         'image_url',
         'is_available',
@@ -31,4 +35,25 @@ class Coffee extends Model
 
         return Storage::disk('public')->url($value);
     }
+public function getLocalizedNameAttribute()
+{
+    return app()->getLocale() === 'ar' && $this->name_ar
+        ? $this->name_ar
+        : $this->name;
 }
+
+public function getLocalizedDescriptionAttribute()
+{
+    return app()->getLocale() === 'ar' && $this->description_ar
+        ? $this->description_ar
+        : $this->description;
+}
+
+public function getLocalizedCategoryAttribute()
+{
+    return app()->getLocale() === 'ar' && $this->category_ar
+        ? $this->category_ar
+        : $this->category;
+}
+    }
+
