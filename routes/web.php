@@ -67,6 +67,12 @@ Route::get('/reset', function () {
 Route::get('/forgetpassword', function () {
     return view('Forget');
 });
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/discount', function () {
+        return view('admin.discount');
+    })->name('admin.discount');
+});
+
 
 Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
 Route::get('/reviews/create', [ReviewController::class, 'create'])->name('reviews.create');
