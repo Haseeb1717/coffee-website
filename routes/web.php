@@ -11,6 +11,9 @@ use App\Http\Controllers\LocaleController;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/qrcode',function(){
+    return view('qrcode');
+});
 
 Route::get('/menu', [CoffeeController::class, 'index'])->name('menu');
 
@@ -79,3 +82,7 @@ Route::get('/reviews/create', [ReviewController::class, 'create'])->name('review
 Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 //this route is language 
 Route::get('/lang/{locale}', [LocaleController::class, 'switch'])->name('lang.switch');
+
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404);
+});
